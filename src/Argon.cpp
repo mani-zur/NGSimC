@@ -107,10 +107,12 @@ void Argon::makeFoces(){
 }
 
 void Argon::Simulate(){
-    int limiter = cfg.GetValue((char *)"S_o");
+    int S_o = cfg.GetValue((char *)"S_o");
+    int S_d = cfg.GetValue((char *)"S_d");
+    int S_xyz = cfg.GetValue((char *)"S_xyz");
     double tau = cfg.GetValue((char *)"tau");
     double m = cfg.GetValue((char *)"m");
-    for(int i = 0 ; i < limiter; i++){
+    for(int i = 0 ; i < S_o + S_d ; i++){
         for (int i = 0; i < N ; i++){
             px[i] += 0.5*fx[i]*tau;
             py[i] += 0.5*fy[i]*tau;
@@ -125,6 +127,29 @@ void Argon::Simulate(){
             py[i] += 0.5*fy[i]*tau;
             pz[i] += 0.5*fz[i]*tau;
         }
-        makeFile(true);
+        //cout << "T = " <<getTemperature()<<endl; //show temperature
+        if ( i >= S_o && !(i % S_xyz))makeFile(true);
     }
+}
+
+double Argon::getPressure(){
+    double L = cfg.GetValue((char *)"L");
+    double f = cfg.GetValue((char *)"f");
+    double p = 0;
+    for (int i = 0 ; i < N ; i++){
+        double r = sqrt(x[i]*x[i]+y[i]*y[i]+z[i]*z[i]); 
+        if (r >= L) p += f*(L-r)*x[i]/r + f*(L-r)*y[i]/r + f*(L-r)*z[i]/r;
+    }
+    p = p / (4*3.1415*L*L);
+    return p;
+}
+
+double Argon::getTemperature(){
+    double m = cfg.GetValue((char *)"m");
+    double T = 0;
+    for (int i = 0 ; i < N ; i++){
+        T += px[i]*px[i]+py[i]*py[i]+pz[i]*pz[i];
+    }
+    T = T/(3*N*kB*m);
+    return T;
 }
