@@ -6,13 +6,18 @@ using namespace std;
 
 int main(int argc, char ** argv) {
     clock_t start = clock();    //start time counting
-    int u = 3;
-    int a = 1;
 
-    Argon argon(u);
-    argon.makeCristal(a);
-    argon.makeFile(false);
-    argon.makeStartMomentum(1000);
+    if (argc > 1) {
+        Argon argon(argv[1]);
+        argon.makeCristal();
+        argon.makeFile(false);
+        argon.makeStartMomentum();
+        argon.makeFoces();
+        argon.Simulate();
+    }
+    else cerr << "Wrong count of aguments"<< endl;
+
     printf("Time taken: %.2fs\n", (double)(clock() - start)/CLOCKS_PER_SEC);    //calculate procesinng time
+    return 0;
 
 }

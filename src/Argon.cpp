@@ -1,17 +1,12 @@
 #include "Argon.h"
 using namespace std;
 
-//givie random sign (-1,1)
-int rSign(){
-    if (rand()%2) return -1;
-    else return 1;
-}
 
-Argon::Argon(int k){
+Argon::Argon(char * cFile){
+    cfg = Config(cFile);
 
-
-    n = k;
-    N = pow(k,3);
+    n = cfg.GetValue((char *)"n");
+    N = pow(n,3);
     x = (double *) calloc(N, sizeof(double));
     y = (double *) calloc(N, sizeof(double));
     z = (double *) calloc(N, sizeof(double));
@@ -24,7 +19,8 @@ Argon::Argon(int k){
 
 }
 
-void Argon::makeCristal(double a){
+void Argon::makeCristal(){
+    double a = cfg.GetValue((char*)"a");
     double h = (n-1)/2; //help variable
 
     double bx [] = {a, a/2, a/2};
@@ -53,7 +49,8 @@ void Argon::makeFile(bool app){
     xyz.close();
 }
 
-void Argon::makeStartMomentum(double T0){
+void Argon::makeStartMomentum(){
+    double T0 = cfg.GetValue((char *)"T0");
     srand(time(NULL));
     double E_sum = 0;
     for (int i = 0 ; i < N ; i++){
@@ -74,5 +71,44 @@ void Argon::makeStartMomentum(double T0){
         px[i] =- sum_px/N;
         py[i] =- sum_py/N;
         pz[i] =- sum_pz/N;
+    }
+}
+
+void Argon::makeFoces(){
+    for (int i = 0 ; i < N ; i++) fx[i] = fy[i] = fz[i] = 0; //delete old foces
+    double e = 12*cfg.GetValue((char *)"e");
+    double R = cfg.GetValue((char *)"R");
+    double L = cfg.GetValue((char *)"L");
+    double f = cfg.GetValue((char *)"f");
+    double rij, rij_x, rij_y, rij_z, h;
+    for (int i = 0 ; i < N ; i++){
+        for(int j = i+1 ; j < N ; j++){
+            rij_x = x[j]-x[i];
+            rij_y = y[j]-y[i];
+            rij_z = z[j]-z[i];
+            rij = rij_x * rij_x + rij_y * rij_y + rij_z * rij_z;
+            h = (R*R*R*R*R*R)/(rij*rij*rij);
+            e = e*h*(h-1)/(rij);
+            fx[i] = e*rij_x;
+            fy[i] = e*rij_y;
+            fz[i] = e*rij_z;
+            fx[j] = -fx[i];
+            fy[j] = -fy[i];
+            fz[j] = -fz[i];
+        }
+        //virtual vessel
+        double r = sqrt(x[i]*x[i]+y[i]*y[i]+z[i]*z[i]); 
+        if (r >= L){
+            fx[i] += f*(L-r)*x[i]/r;
+            fy[i] += f*(L-r)*y[i]/r;
+            fz[i] += f*(L-r)*z[i]/r;
+        }
+    }
+}
+
+void Argon::Simulate(){
+    int limiter = cfg.GetValue((char *)"S_o");
+    for(int i = 0 ; i < limiter; i++){
+        makeFoces();
     }
 }
