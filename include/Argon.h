@@ -25,4 +25,6 @@ public:
     void makeStartMomentum();
     void makeFoces();
     void Simulate();
+    double getTemperature();
+    double getPressure();
 };

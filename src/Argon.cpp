@@ -68,9 +68,9 @@ void Argon::makeStartMomentum(){
     }
     //remove movement of cristal
     for (int i = 0 ; i < N ; i++){
-        px[i] =- sum_px/N;
-        py[i] =- sum_py/N;
-        pz[i] =- sum_pz/N;
+        px[i] -= sum_px/N;
+        py[i] -= sum_py/N;
+        pz[i] -= sum_pz/N;
     }
 }
 
@@ -108,7 +108,23 @@ void Argon::makeFoces(){
 
 void Argon::Simulate(){
     int limiter = cfg.GetValue((char *)"S_o");
+    double tau = cfg.GetValue((char *)"tau");
+    double m = cfg.GetValue((char *)"m");
     for(int i = 0 ; i < limiter; i++){
+        for (int i = 0; i < N ; i++){
+            px[i] += 0.5*fx[i]*tau;
+            py[i] += 0.5*fy[i]*tau;
+            pz[i] += 0.5*fz[i]*tau;
+            x[i]  += px[i]*tau/m;
+            y[i]  += py[i]*tau/m;
+            z[i]  += pz[i]*tau/m;   
+        }
         makeFoces();
+        for (int i = 0; i < N ; i++){
+            px[i] += 0.5*fx[i]*tau;
+            py[i] += 0.5*fy[i]*tau;
+            pz[i] += 0.5*fz[i]*tau;
+        }
+        makeFile(true);
     }
 }
