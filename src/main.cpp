@@ -12,12 +12,11 @@ int main(int argc, char ** argv) {
         argon.makeCristal();
         argon.makeFile(false);
         argon.makeStartMomentum();
-        argon.makeFoces();
         argon.Simulate();
     }
     else cerr << "Wrong count of aguments"<< endl;
 
-    printf("Time taken: %.2fs\n", (double)(clock() - start)/CLOCKS_PER_SEC);    //calculate procesinng time
+    printf("Total simulation time: %.2fs\n", (double)(clock() - start)/CLOCKS_PER_SEC);    //calculate procesinng time
     return 0;
 
 }

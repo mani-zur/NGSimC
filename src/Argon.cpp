@@ -98,7 +98,7 @@ void Argon::makeFoces(){
         }
         //virtual vessel
         double r = sqrt(x[i]*x[i]+y[i]*y[i]+z[i]*z[i]); 
-        if (r >= L){
+        if (r > L){
             fx[i] += f*(L-r)*x[i]/r;
             fy[i] += f*(L-r)*y[i]/r;
             fz[i] += f*(L-r)*z[i]/r;
@@ -107,6 +107,7 @@ void Argon::makeFoces(){
 }
 
 void Argon::Simulate(){
+    fstream tFile("data.csv", ofstream::out | ofstream::trunc);
     int S_o = cfg.GetValue((char *)"S_o");
     int S_d = cfg.GetValue((char *)"S_d");
     int S_xyz = cfg.GetValue((char *)"S_xyz");
@@ -127,9 +128,10 @@ void Argon::Simulate(){
             py[i] += 0.5*fy[i]*tau;
             pz[i] += 0.5*fz[i]*tau;
         }
-        //cout << "T = " <<getTemperature()<<endl; //show temperature
+        tFile <<getTemperature()<< ",   "<<getPressure()<<endl; //show temperature
         if ( i >= S_o && !(i % S_xyz))makeFile(true);
     }
+    tFile.close();
 }
 
 double Argon::getPressure(){
@@ -138,7 +140,7 @@ double Argon::getPressure(){
     double p = 0;
     for (int i = 0 ; i < N ; i++){
         double r = sqrt(x[i]*x[i]+y[i]*y[i]+z[i]*z[i]); 
-        if (r >= L) p += f*(L-r)*x[i]/r + f*(L-r)*y[i]/r + f*(L-r)*z[i]/r;
+        if (r > L) p += sqrt(f*(r-L)/r*(x[i]*x[i]+ y[i]*y[i] + z[i]*z[i]));
     }
     p = p / (4*3.1415*L*L);
     return p;
