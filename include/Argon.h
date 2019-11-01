@@ -1,3 +1,6 @@
+#ifndef _argon_h_
+#define _argon_h_
+
 #include<iostream>
 #include<cmath>
 #include<fstream>
@@ -28,3 +31,5 @@ public:
     double getTemperature();
     double getPressure();
 };
+
+#endif

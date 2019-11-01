@@ -1,3 +1,6 @@
+#ifndef _addons_h_
+#define _addons_h_
+
 #include <random>
 #include <fstream>
 #include <iostream>
@@ -16,3 +19,5 @@ public:
     Config(char *);
     double GetValue(char *);
 };
+
+#endif

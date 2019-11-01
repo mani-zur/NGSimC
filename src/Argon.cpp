@@ -40,8 +40,8 @@ void Argon::makeCristal(){
 
 void Argon::makeFile(bool app){
     fstream xyz;
-    if (app) xyz = fstream("out.xyz", ios_base::app);
-    else xyz = fstream("out.xyz", ofstream::out | ofstream::trunc);
+    if (app) xyz = fstream("out/out.xyz", ios_base::app);
+    else xyz = fstream("out/out.xyz", ofstream::out | ofstream::trunc);
     xyz << N <<endl << " " << endl;
     for (int i = 0 ; i < N ; i++){
         xyz << "Ar " << x[i] << " " << y[i] << " " << z[i] << endl;
@@ -107,7 +107,7 @@ void Argon::makeFoces(){
 }
 
 void Argon::Simulate(){
-    fstream tFile("data.csv", ofstream::out | ofstream::trunc);
+    fstream tFile("out/data.csv", ofstream::out | ofstream::trunc);
     int S_o = cfg.GetValue((char *)"S_o");
     int S_d = cfg.GetValue((char *)"S_d");
     int S_xyz = cfg.GetValue((char *)"S_xyz");
