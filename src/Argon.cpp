@@ -83,18 +83,18 @@ void Argon::makeFoces(){
     double rij, rij_x, rij_y, rij_z, h;
     for (int i = 0 ; i < N ; i++){
         for(int j = i+1 ; j < N ; j++){
-            rij_x = x[j]-x[i];
-            rij_y = y[j]-y[i];
-            rij_z = z[j]-z[i];
+            rij_x = x[i]-x[j];
+            rij_y = y[i]-y[j];
+            rij_z = z[i]-z[j];
             rij = rij_x * rij_x + rij_y * rij_y + rij_z * rij_z;
             h = (R*R*R*R*R*R)/(rij*rij*rij);
-            e = e*h*(h-1)/(rij);
-            fx[i] = e*rij_x;
-            fy[i] = e*rij_y;
-            fz[i] = e*rij_z;
-            fx[j] = -fx[i];
-            fy[j] = -fy[i];
-            fz[j] = -fz[i];
+            h = e*h*(h-1)/(rij);
+            fx[i] += h*rij_x;
+            fy[i] += h*rij_y;
+            fz[i] += h*rij_z;
+            fx[j] -= h*rij_x;
+            fy[j] -= h*rij_y;
+            fz[j] -= h*rij_z;
         }
         //virtual vessel
         double r = sqrt(x[i]*x[i]+y[i]*y[i]+z[i]*z[i]); 
