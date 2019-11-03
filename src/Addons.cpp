@@ -8,6 +8,33 @@ int rSign(){
     else return 1;
 }
 
+measure getMeanParams(){
+    measure meas = {0,0,0,0};
+    ifstream input ("out/data.csv");
+    string line;
+    int i = 0;
+    size_t delimiter;
+    while (input >> line){
+        delimiter = line.find(",");
+        meas.T += stod(line.substr(0,delimiter));
+        meas.p += stod(line.substr(delimiter+1));
+        i++;
+    }
+    meas.T = meas.T/i;
+    meas.p = meas.p/i;
+    input.close();
+    input = ifstream("out/data.csv");
+    while (input >> line){
+        delimiter = line.find(",");
+        meas.Terr += (meas.T - stod(line.substr(0,delimiter))) * (meas.T - stod(line.substr(0,delimiter)));
+        meas.perr += (meas.p - stod(line.substr(delimiter+1))) * (meas.p - stod(line.substr(delimiter+1)));
+    }
+    meas.perr = sqrt(meas.perr/(i-1));
+    meas.Terr = sqrt(meas.Terr/(i-1));
+    input.close();
+    return meas;
+}
+
 //Reading data form config file
 Config::Config(char* fName){
     ifstream cFile (fName);

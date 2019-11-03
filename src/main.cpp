@@ -13,6 +13,9 @@ int main(int argc, char ** argv) {
         argon.makeFile(false);
         argon.makeStartMomentum();
         argon.Simulate();
+        measure stats = getMeanParams();
+        cout << "T = " << stats.T << " +/- " << stats.Terr << endl;
+        cout << "p = " << stats.p << " +/- " << stats.perr << endl;
     }
     else cerr << "Wrong count of aguments"<< endl;
 

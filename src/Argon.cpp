@@ -21,6 +21,7 @@ Argon::Argon(char * cFile){
 
 void Argon::makeCristal(){
     double a = cfg.GetValue((char*)"a");
+    double L = cfg.GetValue((char*)"L");
     double h = (n-1)/2; //help variable
 
     double bx [] = {a, a/2, a/2};
@@ -36,6 +37,8 @@ void Argon::makeCristal(){
                 y[i] = by[0]*(i0 - h) + by[1]*(i1 - h) + by[2]*(i2 - h);
                 z[i] = bz[0]*(i0 - h) + bz[1]*(i1 - h) + bz[2]*(i2 - h);
     }}}
+    double r = sqrt(x[i]*x[i]+y[i]*y[i]+z[i]*z[i]); 
+    if (r > L) cerr << "The cristal structure is larger than vessel!" <<endl;
 }
 
 void Argon::makeFile(bool app){
@@ -128,8 +131,10 @@ void Argon::Simulate(){
             py[i] += 0.5*fy[i]*tau;
             pz[i] += 0.5*fz[i]*tau;
         }
-        tFile <<getTemperature()<< ",   "<<getPressure()<<endl; //show temperature
-        if ( i >= S_o && !(i % S_xyz))makeFile(true);
+        if ( i >= S_o && !(i % S_xyz)) {
+            makeFile(true);
+            tFile <<getTemperature()<<","<<getPressure()<<endl; //show temperature
+        }
     }
     tFile.close();
 }

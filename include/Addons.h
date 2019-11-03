@@ -7,8 +7,14 @@
 #include <algorithm>
 #include <string.h>
 
+typedef struct measure{
+    double T , p, Terr, perr;
+}measure;
+
 int rSign();
-void readConfig( char * );
+
+//return mean simulation parameters
+measure getMeanParams();
 
 class Config {
     std::string param [20];
