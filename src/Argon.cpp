@@ -114,6 +114,7 @@ void Argon::Simulate(){
     int S_o = cfg.GetValue((char *)"S_o");
     int S_d = cfg.GetValue((char *)"S_d");
     int S_xyz = cfg.GetValue((char *)"S_xyz");
+    int S_out = cfg.GetValue((char *)"S_out");
     double tau = cfg.GetValue((char *)"tau");
     double m = cfg.GetValue((char *)"m");
     for(int i = 0 ; i < S_o + S_d ; i++){
@@ -131,10 +132,8 @@ void Argon::Simulate(){
             py[i] += 0.5*fy[i]*tau;
             pz[i] += 0.5*fz[i]*tau;
         }
-        if ( i >= S_o && !(i % S_xyz)) {
-            makeFile(true);
-            tFile <<getTemperature()<<","<<getPressure()<<endl; //show temperature
-        }
+        if ( i >= S_o && !(i % S_xyz)) makeFile(true);  //save positions to file
+        if ( !(i % S_out)) tFile <<getTemperature()<<","<<getPressure()<<endl; //save param to file
     }
     tFile.close();
 }
