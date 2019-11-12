@@ -78,8 +78,9 @@ void Argon::makeStartMomentum(){
 }
 
 void Argon::makeFoces(){
+    E = 0;
     for (int i = 0 ; i < N ; i++) fx[i] = fy[i] = fz[i] = 0; //delete old foces
-    double e = 12*cfg.GetValue((char *)"e");
+    double e = cfg.GetValue((char *)"e");
     double R = cfg.GetValue((char *)"R");
     double L = cfg.GetValue((char *)"L");
     double f = cfg.GetValue((char *)"f");
@@ -91,7 +92,8 @@ void Argon::makeFoces(){
             rij_z = z[i]-z[j];
             rij = rij_x * rij_x + rij_y * rij_y + rij_z * rij_z;
             h = (R*R*R*R*R*R)/(rij*rij*rij);
-            h = e*h*(h-1)/(rij);
+            E += e*h*(h-2);
+            h = 12*e*h*(h-1)/(rij);
             fx[i] += h*rij_x;
             fy[i] += h*rij_y;
             fz[i] += h*rij_z;
@@ -102,6 +104,7 @@ void Argon::makeFoces(){
         //virtual vessel
         double r = sqrt(x[i]*x[i]+y[i]*y[i]+z[i]*z[i]); 
         if (r > L){
+            E += 0.5*f*(r-L)*(r-L);
             fx[i] += f*(L-r)*x[i]/r;
             fy[i] += f*(L-r)*y[i]/r;
             fz[i] += f*(L-r)*z[i]/r;
@@ -111,6 +114,7 @@ void Argon::makeFoces(){
 
 void Argon::Simulate(){
     fstream tFile("out/data.csv", ofstream::out | ofstream::trunc);
+    tFile << "T , p, V"<<endl;   //file header
     int S_o = cfg.GetValue((char *)"S_o");
     int S_d = cfg.GetValue((char *)"S_d");
     int S_xyz = cfg.GetValue((char *)"S_xyz");
@@ -133,7 +137,7 @@ void Argon::Simulate(){
             pz[i] += 0.5*fz[i]*tau;
         }
         if ( i >= S_o && !(i % S_xyz)) makeFile(true);  //save positions to file
-        if ( !(i % S_out)) tFile <<getTemperature()<<","<<getPressure()<<endl; //save param to file
+        if ( !(i % S_out)) tFile <<getTemperature()<<","<<getPressure()<< ","<<E <<endl; //save param to file
     }
     tFile.close();
 }

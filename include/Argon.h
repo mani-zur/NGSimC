@@ -18,6 +18,7 @@ class Argon{
     double * px,* py, *pz;
     double * fx,* fy, *fz;
 
+    double E; //energy
     int n; //side length
     int N; //count of particles
     
